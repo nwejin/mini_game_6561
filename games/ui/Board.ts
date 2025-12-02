@@ -39,6 +39,16 @@ export default class Board {
     this.setupInput();
   }
 
+  reset() {
+    // 기존 타일들 모두 제거
+    this.tiles.forEach((tile) => tile.destroy());
+    this.tiles.clear();
+
+    // 초기 타일 배치
+    this.addTile(0, 0, 3);
+    this.addRandomTile();
+  }
+
   // 그리드 선 그리기
   private drawGrid() {
     const gridGraphics = this.scene.add.graphics();
@@ -115,8 +125,8 @@ export default class Board {
     const randomIndex = Math.floor(Math.random() * emptyCells.length);
     const { row, col } = emptyCells[randomIndex];
 
-    // 4. 80% 확률로 3, 20% 확률로 9
-    const value = Math.random() < 0.8 ? 3 : 9;
+    // 4. 90% 확률로 3, 10% 확률로 9
+    const value = Math.random() < 0.9 ? 3 : 9;
 
     // 5. 타일 생성
     this.addTile(row, col, value);

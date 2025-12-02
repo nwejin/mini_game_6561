@@ -27,7 +27,16 @@ export default function Home() {
     game.events.on('scoreUpdate', (newScore: number) => {
       setScore((prev) => prev + newScore);
     });
+
+    game.events.on('scoreReset', () => {
+      setScore(0);
+    });
   }
+
+  const handleReset = () => {
+    gameInstanceRef.current?.events.emit('resetGame');
+    setScore(0);
+  };
 
   return (
     <div className="w-full min-h-screen flex flex-col items-center justify-center py-4 px-4 gap-4">
@@ -40,6 +49,12 @@ export default function Home() {
           <p className="text-sm text-gray-600 font-semibold">BEST</p>
           <p className="text-2xl font-bold text-gray-800">0</p>
         </div>
+
+        <button
+          onClick={handleReset}
+          className="bg-orange-500 text-white rounded-lg px-6 py-3 shadow-md hover:bg-orange-600 transition-colors font-bold">
+          NEW GAME
+        </button>
       </div>
 
       <div className="w-full rounded-lg overflow-hidden">
