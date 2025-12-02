@@ -21,7 +21,10 @@ export default class MainScene extends Phaser.Scene {
     // tile_orange.setOrigin(0.5, 0.5); // 기준점을 중심으로 설정 (기본값)
     // tile_orange.setDisplaySize(100, 100);
 
-    const board = new Board(this);
+    const board = new Board(this, (score) => {
+      this.game.events.emit('scoreUpdate', score);
+    });
+
     board.create();
   }
 }

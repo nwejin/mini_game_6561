@@ -14,8 +14,12 @@ export default class Board {
   private swipeStartX: number = 0;
   private swipeStartY: number = 0;
 
-  constructor(scene: Phaser.Scene) {
+  private onScoreChange?: (score: number) => void;
+
+  constructor(scene: Phaser.Scene, onScoreChange?: (score: number) => void) {
     this.scene = scene;
+
+    this.onScoreChange = onScoreChange;
 
     // 800x800 화면의 중앙에 500x500 보드 배치
     // 시작 좌표 = (800 - 500) / 2 = 150
@@ -150,6 +154,10 @@ export default class Board {
           const newValue = currentTile.value * 3;
           this.addTile(row, targetCol, newValue);
 
+          if (this.onScoreChange) {
+            this.onScoreChange(newValue);
+          }
+
           // 기존 타일 2개 제거
           currentTile.destroy();
           nextTile.destroy();
@@ -208,6 +216,10 @@ export default class Board {
           const newValue = currentTile.value * 3;
           this.addTile(row, targetCol, newValue);
 
+          if (this.onScoreChange) {
+            this.onScoreChange(newValue);
+          }
+
           currentTile.destroy();
           prevTile.destroy();
 
@@ -263,6 +275,10 @@ export default class Board {
           const newValue = currentTile.value * 3;
           this.addTile(targetRow, col, newValue);
 
+          if (this.onScoreChange) {
+            this.onScoreChange(newValue);
+          }
+
           currentTile.destroy();
           nextTile.destroy();
 
@@ -317,6 +333,10 @@ export default class Board {
         if (prevTile && currentTile.value === prevTile.value) {
           const newValue = currentTile.value * 3;
           this.addTile(targetRow, col, newValue);
+
+          if (this.onScoreChange) {
+            this.onScoreChange(newValue);
+          }
 
           currentTile.destroy();
           prevTile.destroy();

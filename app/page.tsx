@@ -12,14 +12,20 @@ export default function Home() {
   }, []);
 
   const [score, setScore] = useState(0);
+  const gameInstanceRef = useRef<Phaser.Game | null>(null);
 
   async function initializeGame() {
     const Phaser = await import('phaser');
     const Config = (await import('../games/Config')).default;
 
-    new Phaser.Game({
+    const game = new Phaser.Game({
       ...Config,
       parent: gameContainerRef.current,
+    });
+    gameInstanceRef.current = game;
+
+    game.events.on('scoreUpdate', (newScore: number) => {
+      setScore((prev) => prev + newScore);
     });
   }
 
