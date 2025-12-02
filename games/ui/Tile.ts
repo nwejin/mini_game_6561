@@ -39,6 +39,15 @@ export default class Tile {
     // 이미지 생성
     this.image = this.scene.add.image(x, y, this.imageKey);
     this.image.setDisplaySize(this.cellSize, this.cellSize);
+
+    // 등장 애니메이션
+    this.image.setScale(0);
+    this.scene.tweens.add({
+      targets: this.image,
+      scale: 0.48,
+      duration: 200,
+      ease: 'Back.easeOut',
+    });
   }
 
   destroy() {
