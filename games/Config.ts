@@ -8,7 +8,7 @@ const Config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
   width: GAME_WIDTH,
   height: GAME_HEIGHT,
-  backgroundColor: '#000000',
+  backgroundColor: '#333',
   scene: [LoadingScene, MainScene],
   scale: {
     mode: Phaser.Scale.FIT,
