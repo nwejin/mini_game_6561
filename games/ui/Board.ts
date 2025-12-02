@@ -136,16 +136,43 @@ export default class Board {
         this.removeTile(row, col);
       }
 
-      // 왼쪽부터 재배치
-      rowTiles.forEach((tile, index) => {
-        if (tile.gridX !== index) {
+      let targetCol = 0;
+      let i = 0;
+
+      while (i < rowTiles.length) {
+        const currentTile = rowTiles[i];
+        const nextTile = rowTiles[i + 1];
+
+        // 다음 타일이 있고 같은 값이면 합치기
+        if (nextTile && currentTile.value === nextTile.value) {
+          // 합쳐진 새 타일 생성
+          const newValue = currentTile.value * 3;
+          this.addTile(row, targetCol, newValue);
+
+          // 기존 타일 2개 제거
+          currentTile.destroy();
+          nextTile.destroy();
+
           moved = true;
+          targetCol++;
+          i += 2; // 두 타일 소비
+        } else {
+          // 그냥 이동
+          if (currentTile.gridX !== targetCol || currentTile.gridY !== row) {
+            moved = true;
+          }
+          currentTile.gridX = targetCol;
+          currentTile.gridY = row;
+          currentTile.moveTo(row, targetCol);
+          this.setTile(row, targetCol, currentTile);
+          targetCol++;
+          i++;
         }
-        tile.gridX = index;
-        tile.gridY = row;
-        tile.moveTo(row, index);
-        this.setTile(row, index, tile);
-      });
+      }
+    }
+
+    if (moved) {
+      this.addRandomTile();
     }
 
     return moved;
@@ -167,17 +194,41 @@ export default class Board {
         this.removeTile(row, col);
       }
 
-      // 오른쪽부터 배치
-      rowTiles.forEach((tile, index) => {
-        const targetCol = this.gridSize - rowTiles.length + index;
-        if (tile.gridX !== targetCol) {
+      // 오른쪽부터 배치 + 합치기 (역순 처리)
+      let targetCol = this.gridSize - 1;
+      let i = rowTiles.length - 1;
+
+      while (i >= 0) {
+        const currentTile = rowTiles[i];
+        const prevTile = rowTiles[i - 1];
+
+        // 이전 타일이 있고 같은 값이면 합치기
+        if (prevTile && currentTile.value === prevTile.value) {
+          const newValue = currentTile.value * 3;
+          this.addTile(row, targetCol, newValue);
+
+          currentTile.destroy();
+          prevTile.destroy();
+
           moved = true;
+          targetCol--;
+          i -= 2;
+        } else {
+          if (currentTile.gridX !== targetCol || currentTile.gridY !== row) {
+            moved = true;
+          }
+          currentTile.gridX = targetCol;
+          currentTile.gridY = row;
+          currentTile.moveTo(row, targetCol);
+          this.setTile(row, targetCol, currentTile);
+          targetCol--;
+          i--;
         }
-        tile.gridX = targetCol;
-        tile.gridY = row;
-        tile.moveTo(row, targetCol);
-        this.setTile(row, targetCol, tile);
-      });
+      }
+    }
+
+    if (moved) {
+      this.addRandomTile();
     }
 
     return moved;
@@ -199,16 +250,40 @@ export default class Board {
         this.removeTile(row, col);
       }
 
-      // 위쪽부터 배치
-      colTiles.forEach((tile, index) => {
-        if (tile.gridY !== index) {
+      // 위쪽부터 배치 + 합치기
+      let targetRow = 0;
+      let i = 0;
+
+      while (i < colTiles.length) {
+        const currentTile = colTiles[i];
+        const nextTile = colTiles[i + 1];
+
+        if (nextTile && currentTile.value === nextTile.value) {
+          const newValue = currentTile.value * 3;
+          this.addTile(targetRow, col, newValue);
+
+          currentTile.destroy();
+          nextTile.destroy();
+
           moved = true;
+          targetRow++;
+          i += 2;
+        } else {
+          if (currentTile.gridY !== targetRow || currentTile.gridX !== col) {
+            moved = true;
+          }
+          currentTile.gridX = col;
+          currentTile.gridY = targetRow;
+          currentTile.moveTo(targetRow, col);
+          this.setTile(targetRow, col, currentTile);
+          targetRow++;
+          i++;
         }
-        tile.gridX = col;
-        tile.gridY = index;
-        tile.moveTo(index, col);
-        this.setTile(index, col, tile);
-      });
+      }
+    }
+
+    if (moved) {
+      this.addRandomTile();
     }
 
     return moved;
@@ -230,17 +305,40 @@ export default class Board {
         this.removeTile(row, col);
       }
 
-      // 아래쪽부터 배치
-      colTiles.forEach((tile, index) => {
-        const targetRow = this.gridSize - colTiles.length + index;
-        if (tile.gridY !== targetRow) {
+      // 아래쪽부터 배치 + 합치기 (역순 처리)
+      let targetRow = this.gridSize - 1;
+      let i = colTiles.length - 1;
+
+      while (i >= 0) {
+        const currentTile = colTiles[i];
+        const prevTile = colTiles[i - 1];
+
+        if (prevTile && currentTile.value === prevTile.value) {
+          const newValue = currentTile.value * 3;
+          this.addTile(targetRow, col, newValue);
+
+          currentTile.destroy();
+          prevTile.destroy();
+
           moved = true;
+          targetRow--;
+          i -= 2;
+        } else {
+          if (currentTile.gridY !== targetRow || currentTile.gridX !== col) {
+            moved = true;
+          }
+          currentTile.gridX = col;
+          currentTile.gridY = targetRow;
+          currentTile.moveTo(targetRow, col);
+          this.setTile(targetRow, col, currentTile);
+          targetRow--;
+          i--;
         }
-        tile.gridX = col;
-        tile.gridY = targetRow;
-        tile.moveTo(targetRow, col);
-        this.setTile(targetRow, col, tile);
-      });
+      }
+    }
+
+    if (moved) {
+      this.addRandomTile();
     }
 
     return moved;
