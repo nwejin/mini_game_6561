@@ -42,6 +42,12 @@ export default class LoadingScene extends Phaser.Scene {
     this.load.image('tile_blue', '/tile_blue.png');
     this.load.image('tile_red', '/tile_red.png');
     this.load.image('tile_orange', '/tile_orange.png');
+
+    const tileValues = [3, 9, 27, 81, 243, 729, 2187, 6561, 19683];
+
+    tileValues.forEach((value) => {
+      this.load.image(`tile_${value}`, `tile_${value}.png`);
+    });
   }
 
   create() {

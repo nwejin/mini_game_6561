@@ -28,9 +28,8 @@ export default class Board {
     this.tiles.clear();
 
     // 초기 타일 배치
-    this.addTile(0, 0, 'tile_blue');
-    this.addTile(0, 3, 'tile_red');
-    this.addTile(0, 2, 'tile_orange');
+    this.addTile(0, 0, 3);
+    this.addRandomTile();
 
     this.setupInput();
   }
@@ -75,19 +74,47 @@ export default class Board {
   }
 
   // 특정 위치에 타일 추가
-  addTile(row: number, col: number, tileKey: string) {
+  addTile(row: number, col: number, value: number) {
+    const imageKey = `tile_${value}`;
     const tile = new Tile({
       scene: this.scene,
       gridX: col,
       gridY: row,
       cellSize: this.tileSize,
-      imageKey: tileKey,
+      imageKey: imageKey,
       boardStartX: this.startX,
       boardStartY: this.startY,
+      value: value,
     });
 
     tile.create();
     this.setTile(row, col, tile);
+  }
+
+  private addRandomTile() {
+    const emptyCells: { row: number; col: number }[] = [];
+
+    for (let row = 0; row < this.gridSize; row++) {
+      for (let col = 0; col < this.gridSize; col++) {
+        if (!this.getTile(row, col)) {
+          emptyCells.push({ row, col });
+        }
+      }
+    }
+
+    if (emptyCells.length === 0) {
+      return;
+    }
+
+    // 3. 랜덤으로 빈 셀 선택
+    const randomIndex = Math.floor(Math.random() * emptyCells.length);
+    const { row, col } = emptyCells[randomIndex];
+
+    // 4. 80% 확률로 3, 20% 확률로 9
+    const value = Math.random() < 0.8 ? 3 : 9;
+
+    // 5. 타일 생성
+    this.addTile(row, col, value);
   }
 
   // 이동

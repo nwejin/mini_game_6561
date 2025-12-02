@@ -6,6 +6,7 @@ interface TileConfigs {
   imageKey: string;
   boardStartX: number;
   boardStartY: number;
+  value: number;
 }
 
 export default class Tile {
@@ -17,6 +18,7 @@ export default class Tile {
   boardStartX: number;
   boardStartY: number;
   image: Phaser.GameObjects.Image | null = null;
+  value: number;
 
   constructor(configs: TileConfigs) {
     this.scene = configs.scene;
@@ -26,6 +28,7 @@ export default class Tile {
     this.imageKey = configs.imageKey;
     this.boardStartX = configs.boardStartX;
     this.boardStartY = configs.boardStartY;
+    this.value = configs.value;
   }
 
   create() {
