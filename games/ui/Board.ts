@@ -1,3 +1,5 @@
+import Tile from './Tile';
+
 export default class Board {
   private scene: Phaser.Scene;
   private gridSize: number = 6;
@@ -6,7 +8,7 @@ export default class Board {
   private boardHeight: number = 600;
   private startX: number;
   private startY: number;
-  private tiles: (Phaser.GameObjects.Image | null)[][] = [];
+  private tiles: (Tile | null)[][] = [];
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
@@ -30,7 +32,7 @@ export default class Board {
 
     // 초기 타일 배치
     this.addTile(0, 0, 'tile_blue');
-    this.addTile(0, 1, 'tile_red');
+    this.addTile(0, 3, 'tile_red');
     this.addTile(0, 2, 'tile_orange');
   }
 
@@ -54,19 +56,22 @@ export default class Board {
 
   // 특정 위치에 타일 추가
   addTile(row: number, col: number, tileKey: string) {
-    // 타일 중심 위치 계산
-    const x = this.startX + col * this.tileSize + this.tileSize / 2;
-    const y = this.startY + row * this.tileSize + this.tileSize / 2;
+    const tile = new Tile({
+      scene: this.scene,
+      gridX: col,
+      gridY: row,
+      cellSize: this.tileSize,
+      imageKey: tileKey,
+      boardStartX: this.startX,
+      boardStartY: this.startY,
+    });
 
-    // 타일 생성
-    const tile = this.scene.add.image(x, y, tileKey);
-    tile.setDisplaySize(this.tileSize, this.tileSize);
-
+    tile.create();
     this.tiles[row][col] = tile;
   }
 
   // 특정 위치의 타일 가져오기
-  getTile(row: number, col: number): Phaser.GameObjects.Image | null {
+  getTile(row: number, col: number): Tile | null {
     return this.tiles[row][col];
   }
 }
