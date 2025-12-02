@@ -1,8 +1,8 @@
 import MainScene from './scenes/MainScene';
 import LoadingScene from './scenes/LoadingScene';
 
-export const GAME_WIDTH = 800;
-export const GAME_HEIGHT = 800;
+export const GAME_WIDTH = 600;
+export const GAME_HEIGHT = 600;
 
 const Config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,

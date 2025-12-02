@@ -44,7 +44,7 @@ export default class Tile {
     this.image.setScale(0);
     this.scene.tweens.add({
       targets: this.image,
-      scale: 0.48,
+      scale: 0.68,
       duration: 200,
       ease: 'Back.easeOut',
     });

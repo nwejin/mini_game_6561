@@ -1,11 +1,12 @@
 import Tile from './Tile';
+import { GAME_WIDTH, GAME_HEIGHT } from '../Config';
 
 export default class Board {
   private scene: Phaser.Scene;
-  private gridSize: number = 6;
-  private tileSize: number = 100;
-  private boardWidth: number = 600; // 5 * 100
-  private boardHeight: number = 600;
+  private gridSize: number = 4;
+  private tileSize: number = 140;
+  private boardWidth: number = 560; // 5 * 100
+  private boardHeight: number = 560;
   private startX: number;
   private startY: number;
   private tiles: Map<string, Tile> = new Map();
@@ -18,8 +19,8 @@ export default class Board {
 
     // 800x800 화면의 중앙에 500x500 보드 배치
     // 시작 좌표 = (800 - 500) / 2 = 150
-    this.startX = (800 - this.boardWidth) / 2;
-    this.startY = (800 - this.boardHeight) / 2;
+    this.startX = (GAME_WIDTH - this.boardWidth) / 2;
+    this.startY = (GAME_HEIGHT - this.boardHeight) / 2;
   }
 
   create() {

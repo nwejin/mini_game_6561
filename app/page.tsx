@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export default function Home() {
   const gameContainerRef = useRef<HTMLDivElement>(null);
@@ -10,6 +10,8 @@ export default function Home() {
       initializeGame();
     }
   }, []);
+
+  // const [score, setScore] = useState(0);
 
   async function initializeGame() {
     const Phaser = await import('phaser');
