@@ -44,4 +44,17 @@ export default class Tile {
       this.image = null;
     }
   }
+
+  moveTo(row: number, col: number) {
+    const x = this.boardStartX + col * this.cellSize + this.cellSize / 2;
+    const y = this.boardStartY + row * this.cellSize + this.cellSize / 2;
+
+    this.scene.tweens.add({
+      targets: this.image,
+      x: x,
+      y: y,
+      duration: 200,
+      ease: 'Power2',
+    });
+  }
 }
