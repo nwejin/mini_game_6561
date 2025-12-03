@@ -1,6 +1,12 @@
 import Tile from './Tile';
 import { GAME_WIDTH, GAME_HEIGHT } from '../Config';
 
+interface BoardConfigs {
+  scene: Phaser.Scene;
+  onScoreChange?: (score: number) => void;
+  onGameOver?: (reason: 'win' | 'lose') => void;
+}
+
 export default class Board {
   private scene: Phaser.Scene;
   private gridSize: number = 4;
@@ -15,11 +21,14 @@ export default class Board {
   private swipeStartY: number = 0;
 
   private onScoreChange?: (score: number) => void;
+  private onGameOver?: (reason: 'win' | 'lose') => void;
+  private isGameOver: boolean = false;
 
-  constructor(scene: Phaser.Scene, onScoreChange?: (score: number) => void) {
-    this.scene = scene;
+  constructor(configs: BoardConfigs) {
+    this.scene = configs.scene;
 
-    this.onScoreChange = onScoreChange;
+    this.onScoreChange = configs.onScoreChange;
+    this.onGameOver = configs.onGameOver;
 
     // 800x800 화면의 중앙에 500x500 보드 배치
     // 시작 좌표 = (800 - 500) / 2 = 150
@@ -40,6 +49,8 @@ export default class Board {
   }
 
   reset() {
+    this.isGameOver = false;
+
     // 기존 타일들 모두 제거
     this.tiles.forEach((tile) => tile.destroy());
     this.tiles.clear();
@@ -192,6 +203,18 @@ export default class Board {
 
     if (moved) {
       this.addRandomTile();
+
+      if (this.has19683()) {
+        this.isGameOver = true;
+        this.onGameOver?.('win');
+        return moved;
+      }
+
+      // 게임 오버 체크
+      if (!this.canMakeMove()) {
+        this.isGameOver = true;
+        this.onGameOver?.('lose');
+      }
     }
 
     return moved;
@@ -252,6 +275,18 @@ export default class Board {
 
     if (moved) {
       this.addRandomTile();
+
+      if (this.has19683()) {
+        this.isGameOver = true;
+        this.onGameOver?.('win');
+        return moved;
+      }
+
+      // 게임 오버 체크
+      if (!this.canMakeMove()) {
+        this.isGameOver = true;
+        this.onGameOver?.('lose');
+      }
     }
 
     return moved;
@@ -311,6 +346,18 @@ export default class Board {
 
     if (moved) {
       this.addRandomTile();
+
+      if (this.has19683()) {
+        this.isGameOver = true;
+        this.onGameOver?.('win');
+        return moved;
+      }
+
+      // 게임 오버 체크
+      if (!this.canMakeMove()) {
+        this.isGameOver = true;
+        this.onGameOver?.('lose');
+      }
     }
 
     return moved;
@@ -370,6 +417,18 @@ export default class Board {
 
     if (moved) {
       this.addRandomTile();
+
+      if (this.has19683()) {
+        this.isGameOver = true;
+        this.onGameOver?.('win');
+        return moved;
+      }
+
+      // 게임 오버 체크
+      if (!this.canMakeMove()) {
+        this.isGameOver = true;
+        this.onGameOver?.('lose');
+      }
     }
 
     return moved;
@@ -377,7 +436,7 @@ export default class Board {
 
   private setupInput() {
     this.scene.input.keyboard?.on('keydown', (event: KeyboardEvent) => {
-      if (this.isMoving) return;
+      if (this.isMoving || this.isGameOver) return;
 
       let moved = false;
 
@@ -446,5 +505,33 @@ export default class Board {
         });
       }
     });
+  }
+
+  private has19683(): boolean {
+    for (const tile of this.tiles.values()) {
+      if (tile.value === 19683) return true;
+    }
+    return false;
+  }
+
+  private canMakeMove(): boolean {
+    for (let row = 0; row < this.gridSize; row++) {
+      for (let col = 0; col < this.gridSize - 1; col++) {
+        const tile1 = this.getTile(row, col);
+        const tile2 = this.getTile(row, col + 1);
+        if (!tile1 || !tile2) return true;
+        if (tile1.value === tile2.value) return true;
+      }
+    }
+
+    for (let col = 0; col < this.gridSize; col++) {
+      for (let row = 0; row < this.gridSize - 1; row++) {
+        const tile1 = this.getTile(row, col);
+        const tile2 = this.getTile(row + 1, col);
+        if (!tile1 || !tile2) return true;
+        if (tile1.value === tile2.value) return true;
+      }
+    }
+    return false;
   }
 }
