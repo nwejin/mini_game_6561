@@ -18,24 +18,33 @@ export default function Home() {
     const Phaser = await import('phaser');
     const Config = (await import('../games/Config')).default;
 
+    const handleScoreUpdate = (newScore: number) => {
+      setScore((prev) => prev + newScore);
+    };
+
+    const handleResetGame = () => {
+      setScore(0);
+    };
+
     const game = new Phaser.Game({
       ...Config,
       parent: gameContainerRef.current,
+      callbacks: {
+        preBoot: (game) => {
+          game.registry.set('onScoreUpdate', handleScoreUpdate);
+          game.registry.set('onResetGame', handleResetGame);
+        }
+      }
     });
+
     gameInstanceRef.current = game;
-
-    game.events.on('scoreUpdate', (newScore: number) => {
-      setScore((prev) => prev + newScore);
-    });
-
-    game.events.on('scoreReset', () => {
-      setScore(0);
-    });
   }
 
   const handleReset = () => {
-    gameInstanceRef.current?.events.emit('resetGame');
-    setScore(0);
+    const mainScene = gameInstanceRef.current?.scene.getScene('MainScene');
+    if (mainScene && 'resetGame' in mainScene) {
+      (mainScene as { resetGame: () => void }).resetGame();
+    }
   };
 
   return (
