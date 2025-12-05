@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { saveScore } from '@/lib/firestore';
+import { saveScore, getTopScores, ScoreData } from '@/lib/firestore';
 
 export default function Home() {
   const gameContainerRef = useRef<HTMLDivElement>(null);
@@ -25,6 +25,10 @@ export default function Home() {
   const [showGameOverPopup, setShowGameOverPopup] = useState(false);
   const [gameOverReason, setGameOverReason] = useState<'win' | 'lose'>('lose');
   const [nickname, setNickname] = useState('');
+
+  const [showScoreBoard, setShowScoreBoard] = useState(false);
+  const [topScores, setTopScores] = useState<ScoreData[]>([]);
+  const [isLoadingScores, setIsLoadingScores] = useState(false);
 
   async function initializeGame() {
     const Phaser = await import('phaser');
@@ -56,9 +60,16 @@ export default function Home() {
   }
 
   const handleReset = () => {
-    const mainScene = gameInstanceRef.current?.scene.getScene('MainScene');
-    if (mainScene && 'resetGame' in mainScene) {
-      (mainScene as { resetGame: () => void }).resetGame();
+    if (score > 0) {
+      handleStopTimer();
+      setGameOverReason('win');
+      setShowGameOverPopup(true);
+    } else {
+      // 스코어가 0이면 바로 리셋
+      const mainScene = gameInstanceRef.current?.scene.getScene('MainScene');
+      if (mainScene && 'resetGame' in mainScene) {
+        (mainScene as { resetGame: () => void }).resetGame();
+      }
     }
   };
 
@@ -89,20 +100,50 @@ export default function Home() {
     try {
       await saveScore(nickname, score, playTime);
       setShowGameOverPopup(false);
+      setNickname('');
+      setPlayTime(0);
       alert('점수가 저장되었습니다!');
+      const mainScene = gameInstanceRef.current?.scene.getScene('MainScene');
+      if (mainScene && 'resetGame' in mainScene) {
+        (mainScene as { resetGame: () => void }).resetGame();
+      }
     } catch (error) {
       console.error('점수 저장 실패:', error);
       alert('점수 저장에 실패했습니다.');
     }
   };
 
+  const handleResetWithoutSaving = () => {
+    setShowGameOverPopup(false);
+    setNickname('');
+    setPlayTime(0);
+    const mainScene = gameInstanceRef.current?.scene.getScene('MainScene');
+    if (mainScene && 'resetGame' in mainScene) {
+      (mainScene as { resetGame: () => void }).resetGame();
+    }
+  };
+
+  const handleOpenScoreBoard = async () => {
+    setShowScoreBoard(true);
+    setIsLoadingScores(true);
+    try {
+      const scores = await getTopScores(10);
+      setTopScores(scores);
+    } catch (error) {
+      console.error('점수 로드 실패:', error);
+      alert('점수를 불러오는데 실패했습니다.');
+    } finally {
+      setIsLoadingScores(false);
+    }
+  };
+
+  const handleCloseScoreBoard = () => {
+    setShowScoreBoard(false);
+  };
+
   return (
     <div className="w-full min-h-screen flex flex-col items-center justify-center py-4 px-4 gap-4">
-      <div className=" rounded-lg px-3 py-1 shadow-md ">
-        <p className="text-lg font-bold text-gray-500">
-          {Math.floor(playTime / 60)}:{(playTime % 60).toString().padStart(2, '0')}
-        </p>
-      </div>
+      <div className="flex justify-end w-full max-w-[600px] gap-2"></div>
 
       <div className="flex gap-4 w-full max-w-[600px]">
         <div className="bg-blue-50 rounded-lg px-6 py-3 shadow-md flex-1">
@@ -110,8 +151,10 @@ export default function Home() {
           <p className="text-2xl font-bold text-gray-800">{score}</p>
         </div>
         <div className="bg-blue-50  rounded-lg px-6 py-3 shadow-md flex-1">
-          <p className="text-sm text-gray-600 font-semibold">BEST</p>
-          <p className="text-2xl font-bold text-gray-800">0</p>
+          <p className="text-sm text-gray-600 font-semibold">TIME</p>
+          <p className="text-2xl font-bold text-gray-800">
+            {Math.floor(playTime / 60)}:{(playTime % 60).toString().padStart(2, '0')}
+          </p>
         </div>
 
         <button
@@ -126,7 +169,9 @@ export default function Home() {
       </div>
 
       <div className="max-w-[600px] w-full  flex items-center justify-center">
-        <button className="bg-green-500 text-white rounded-lg px-6 py-3 shadow-md hover:bg-green-600 transition-colors font-bold">
+        <button
+          onClick={handleOpenScoreBoard}
+          className="bg-green-500 text-white rounded-lg px-6 py-3 shadow-md hover:bg-green-600 transition-colors font-bold">
           SCORE BOARD
         </button>
       </div>
@@ -148,19 +193,80 @@ export default function Home() {
               </div>
               <input
                 type="text"
-                placeholder="enter yout nickname"
+                placeholder="enter your nickname"
                 value={nickname}
                 onChange={(e) => setNickname(e.target.value)}
                 className="w-full px-4 py-3 border rounded-lg"
                 maxLength={10}
               />
-              <button
-                onClick={handleSaveScore}
-                disabled={!nickname.trim()}
-                className="w-full bg-blue-500 text-white py-3 rounded-lg font-bold hover:bg-blue-600 disabled:bg-gray-300">
-                SAVE SCORE
+              <div className="flex gap-2">
+                <button
+                  onClick={handleSaveScore}
+                  disabled={!nickname.trim()}
+                  className="flex-1 bg-blue-500 text-white py-3 rounded-lg font-bold hover:bg-blue-600 disabled:bg-gray-300">
+                  SAVE SCORE
+                </button>
+                <button
+                  onClick={handleResetWithoutSaving}
+                  className="flex-1 bg-orange-500 text-white py-3 rounded-lg font-bold hover:bg-orange-600">
+                  NEW GAME
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showScoreBoard && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-8 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-3xl font-bold">SCORE BOARD</h2>
+              <button onClick={handleCloseScoreBoard} className="text-gray-500 hover:text-gray-700 text-2xl font-bold">
+                ✕
               </button>
             </div>
+
+            {isLoadingScores ? (
+              <div className="text-center py-8">
+                <p className="text-gray-500">로딩 중...</p>
+              </div>
+            ) : topScores.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-gray-500">아직 저장된 점수가 없습니다.</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {topScores.map((scoreData, index) => (
+                  <div
+                    key={index}
+                    className={`flex items-center gap-4 p-4 rounded-lg ${
+                      index === 0
+                        ? 'bg-yellow-100 border-2 border-yellow-400'
+                        : index === 1
+                        ? 'bg-gray-100 border-2 border-gray-400'
+                        : index === 2
+                        ? 'bg-orange-100 border-2 border-orange-400'
+                        : 'bg-blue-50'
+                    }`}>
+                    <div className="text-2xl font-bold w-8 text-center">{index + 1}</div>
+                    <div className="flex-1">
+                      <p className="font-bold text-lg">{scoreData.nickname}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-gray-600 font-bold">SCORE</p>
+                      <p className="font-bold text-xl">{scoreData.score}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-gray-600 font-bold">TIME</p>
+                      <p className="font-bold text-lg">
+                        {Math.floor(scoreData.time / 60)}:{(scoreData.time % 60).toString().padStart(2, '0')}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}

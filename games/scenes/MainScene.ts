@@ -35,5 +35,10 @@ export default class MainScene extends Phaser.Scene {
   resetGame() {
     this.board.reset();
     this.onResetGame?.();
+
+    const onStartTimer = this.game.registry.get('onStartTimer');
+    if (onStartTimer) {
+      onStartTimer();
+    }
   }
 }

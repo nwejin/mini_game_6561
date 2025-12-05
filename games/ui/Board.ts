@@ -3,7 +3,7 @@ import { GAME_WIDTH, GAME_HEIGHT } from '../Config';
 
 interface BoardConfigs {
   scene: Phaser.Scene;
-  onScoreChange?: (score: number) => void;
+  onScoreUpdate?: (score: number) => void;
   onGameOver?: (reason: 'win' | 'lose') => void;
 }
 
@@ -20,14 +20,14 @@ export default class Board {
   private swipeStartX: number = 0;
   private swipeStartY: number = 0;
 
-  private onScoreChange?: (score: number) => void;
+  private onScoreUpdate?: (score: number) => void;
   private onGameOver?: (reason: 'win' | 'lose') => void;
   private isGameOver: boolean = false;
 
   constructor(configs: BoardConfigs) {
     this.scene = configs.scene;
 
-    this.onScoreChange = configs.onScoreChange;
+    this.onScoreUpdate = configs.onScoreUpdate;
     this.onGameOver = configs.onGameOver;
 
     // 800x800 화면의 중앙에 500x500 보드 배치
@@ -175,8 +175,8 @@ export default class Board {
           const newValue = currentTile.value * 3;
           this.addTile(row, targetCol, newValue);
 
-          if (this.onScoreChange) {
-            this.onScoreChange(newValue);
+          if (this.onScoreUpdate) {
+            this.onScoreUpdate(newValue);
           }
 
           // 기존 타일 2개 제거
@@ -249,8 +249,8 @@ export default class Board {
           const newValue = currentTile.value * 3;
           this.addTile(row, targetCol, newValue);
 
-          if (this.onScoreChange) {
-            this.onScoreChange(newValue);
+          if (this.onScoreUpdate) {
+            this.onScoreUpdate(newValue);
           }
 
           currentTile.destroy();
@@ -320,8 +320,8 @@ export default class Board {
           const newValue = currentTile.value * 3;
           this.addTile(targetRow, col, newValue);
 
-          if (this.onScoreChange) {
-            this.onScoreChange(newValue);
+          if (this.onScoreUpdate) {
+            this.onScoreUpdate(newValue);
           }
 
           currentTile.destroy();
@@ -391,8 +391,8 @@ export default class Board {
           const newValue = currentTile.value * 3;
           this.addTile(targetRow, col, newValue);
 
-          if (this.onScoreChange) {
-            this.onScoreChange(newValue);
+          if (this.onScoreUpdate) {
+            this.onScoreUpdate(newValue);
           }
 
           currentTile.destroy();
