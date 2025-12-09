@@ -1,3 +1,5 @@
-## Phaser3로 만드는 미니 게임
+## Phaser3 mini game - 6561
 
-### 1장 - Phaser3 설치 및 Scene 설정하기
+### 1. Phaser3 설치 및 Scene 설정하기
+### 2. Next.js SSR 에러 (다이나믹 임포트)
+### 3. image Loading Scene 설정
