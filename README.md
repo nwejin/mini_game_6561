@@ -1,5 +1,7 @@
 ## Phaser3 mini game - 6561
 
+#### 게임 플레이하기 ➡️ <a href="https://minigame6561.vercel.app/" target="_blank">PLAY!!!! <a/>
+
 #### 1. Phaser3 설치 및 Scene 설정
 #### 2. Next.js SSR 에러 (다이나믹 임포트)
 #### 3. image Loading Scene 설정
