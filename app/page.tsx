@@ -23,6 +23,8 @@ export default function Home() {
   }, []);
 
   const [score, setScore] = useState(0);
+  const [addScore, setAddScore] = useState(0);
+  const [showAddScore, setShowAddScore] = useState(false);
   const gameInstanceRef = useRef<Phaser.Game | null>(null);
   const [playTime, setPlayTime] = useState(0);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -39,7 +41,15 @@ export default function Home() {
     const Config = (await import('../games/Config')).default;
 
     const handleScoreUpdate = (newScore: number) => {
+      console.log('점수 업데이트:', newScore);
       setScore((prev) => prev + newScore);
+      setAddScore(newScore);
+      setShowAddScore(true);
+
+      setTimeout(() => {
+        setShowAddScore(false);
+        console.log('점수 표시 숨김');
+      }, 1000);
     };
 
     const handleResetGame = () => {
@@ -152,7 +162,19 @@ export default function Home() {
       <div className="flex gap-4 w-full max-w-[600px]">
         <div className="bg-blue-50 rounded-lg px-6 py-3 shadow-md flex-1">
           <p className="text-sm text-gray-600 font-semibold">SCORE</p>
-          <p className="text-2xl font-bold text-gray-800">{score}</p>
+          <div className="flex gap-2 items-center">
+            <p className="text-2xl font-bold text-gray-800">{score}</p>
+            {showAddScore && (
+              <p
+                className="text-xl font-bold text-blue-800"
+                style={{
+                  animation: 'fadeInOut 1s ease-in-out'
+                }}
+              >
+                +{addScore}
+              </p>
+            )}
+          </div>
         </div>
         <div className="bg-blue-50  rounded-lg px-6 py-3 shadow-md flex-1">
           <p className="text-sm text-gray-600 font-semibold">TIME</p>
