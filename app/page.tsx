@@ -30,7 +30,6 @@ export default function Home() {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const [showGameOverPopup, setShowGameOverPopup] = useState(false);
   const [gameOverReason, setGameOverReason] = useState<'win' | 'lose'>('lose');
-  const [nickname, setNickname] = useState('');
 
   const [showScoreBoard, setShowScoreBoard] = useState(false);
   const [topScores, setTopScores] = useState<ScoreData[]>([]);
@@ -110,11 +109,10 @@ export default function Home() {
     setShowGameOverPopup(true);
   };
 
-  const handleSaveScore = async () => {
+  const handleSaveScore = async (nickname: string) => {
     try {
       await saveScore(nickname, score, playTime);
       setShowGameOverPopup(false);
-      setNickname('');
       setPlayTime(0);
       alert('점수가 저장되었습니다!');
       const mainScene = gameInstanceRef.current?.scene.getScene('MainScene');
@@ -129,7 +127,6 @@ export default function Home() {
 
   const handleResetWithoutSaving = () => {
     setShowGameOverPopup(false);
-    setNickname('');
     setPlayTime(0);
     const mainScene = gameInstanceRef.current?.scene.getScene('MainScene');
     if (mainScene && 'resetGame' in mainScene) {
