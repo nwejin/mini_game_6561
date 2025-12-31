@@ -29,12 +29,14 @@ export default class Board {
   private onStartTimer?: () => void;
   private isGameOver: boolean = false;
   private isFirstMove: boolean = true;
+  private gameMode: GameMode;
 
   constructor(configs: BoardConfigs) {
     this.scene = configs.scene;
 
     // 게임 모드 설정 적용
-    const modeConfig = GAME_MODE_CONFIGS[configs.gameMode || '4x4'];
+    this.gameMode = configs.gameMode || '4x4';
+    const modeConfig = GAME_MODE_CONFIGS[this.gameMode];
     this.gridSize = modeConfig.gridSize;
     this.tileSize = modeConfig.tileSize;
     this.boardWidth = modeConfig.boardWidth;
@@ -236,7 +238,7 @@ export default class Board {
 
       this.addRandomTile();
 
-      if (this.has19683()) {
+      if (this.hasWinningTile()) {
         this.isGameOver = true;
         this.onGameOver?.('win');
         return moved;
@@ -314,7 +316,7 @@ export default class Board {
 
       this.addRandomTile();
 
-      if (this.has19683()) {
+      if (this.hasWinningTile()) {
         this.isGameOver = true;
         this.onGameOver?.('win');
         return moved;
@@ -391,7 +393,7 @@ export default class Board {
 
       this.addRandomTile();
 
-      if (this.has19683()) {
+      if (this.hasWinningTile()) {
         this.isGameOver = true;
         this.onGameOver?.('win');
         return moved;
@@ -468,7 +470,7 @@ export default class Board {
 
       this.addRandomTile();
 
-      if (this.has19683()) {
+      if (this.hasWinningTile()) {
         this.isGameOver = true;
         this.onGameOver?.('win');
         return moved;
@@ -557,9 +559,11 @@ export default class Board {
     });
   }
 
-  private has19683(): boolean {
+  private hasWinningTile(): boolean {
+    // 3x3 모드: 6561, 4x4 모드: 19683
+    const winningValue = this.gameMode === '3x3' ? 6561 : 19683;
     for (const tile of this.tiles.values()) {
-      if (tile.value === 19683) return true;
+      if (tile.value === winningValue) return true;
     }
     return false;
   }
