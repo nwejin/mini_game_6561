@@ -39,27 +39,40 @@ export default function SaveScore({
               {Math.floor(playTime / 60)}:{(playTime % 60).toString().padStart(2, '0')}
             </p>
           </div>
-          <input
-            type="text"
-            placeholder="enter your nickname"
-            value={nickname}
-            onChange={(e) => setNickname(e.target.value)}
-            className="w-full px-4 py-3 border rounded-lg"
-            maxLength={10}
-          />
-          <div className="flex gap-2">
-            <button
-              onClick={handleSave}
-              disabled={!nickname.trim()}
-              className="flex-1 bg-blue-500 text-white py-3 rounded-lg font-bold hover:bg-blue-600 disabled:bg-gray-300">
-              SAVE SCORE
-            </button>
+
+          {/* 승리한 경우에만 저장 입력란과 버튼 표시 */}
+          {gameOverReason === 'win' ? (
+            <>
+              <input
+                type="text"
+                placeholder="enter your nickname"
+                value={nickname}
+                onChange={(e) => setNickname(e.target.value)}
+                className="w-full px-4 py-3 border rounded-lg"
+                maxLength={10}
+              />
+              <div className="flex gap-2">
+                <button
+                  onClick={handleSave}
+                  disabled={!nickname.trim()}
+                  className="flex-1 bg-blue-500 text-white py-3 rounded-lg font-bold hover:bg-blue-600 disabled:bg-gray-300">
+                  SAVE SCORE
+                </button>
+                <button
+                  onClick={onResetWithoutSaving}
+                  className="flex-1 bg-orange-500 text-white py-3 rounded-lg font-bold hover:bg-orange-600">
+                  NEW GAME
+                </button>
+              </div>
+            </>
+          ) : (
+            // 패배한 경우 NEW GAME 버튼만 표시
             <button
               onClick={onResetWithoutSaving}
-              className="flex-1 bg-orange-500 text-white py-3 rounded-lg font-bold hover:bg-orange-600">
+              className="w-full bg-orange-500 text-white py-3 rounded-lg font-bold hover:bg-orange-600">
               NEW GAME
             </button>
-          </div>
+          )}
         </div>
       </div>
     </div>

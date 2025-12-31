@@ -79,16 +79,12 @@ export default function Home() {
   }
 
   const handleReset = () => {
-    if (score > 0) {
-      handleStopTimer();
-      setGameOverReason('win');
-      setShowGameOverPopup(true);
-    } else {
-      // 스코어가 0이면 바로 리셋
-      const mainScene = gameInstanceRef.current?.scene.getScene('MainScene');
-      if (mainScene && 'resetGame' in mainScene) {
-        (mainScene as { resetGame: () => void }).resetGame();
-      }
+    // NEW GAME 버튼은 항상 바로 리셋
+    handleStopTimer();
+    setPlayTime(0);
+    const mainScene = gameInstanceRef.current?.scene.getScene('MainScene');
+    if (mainScene && 'resetGame' in mainScene) {
+      (mainScene as { resetGame: () => void }).resetGame();
     }
   };
 
