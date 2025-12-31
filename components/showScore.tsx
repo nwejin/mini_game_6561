@@ -44,6 +44,12 @@ export default function ShowScore({ isLoadingScores, closeScoreBoard, topScores 
                 <div className="text-2xl font-bold w-8 text-center">{index + 1}</div>
                 <div className="flex-1">
                   <p className="font-bold text-lg">{scoreData.nickname}</p>
+                  <p
+                    className={`text-xs font-bold ${
+                      scoreData.mode === '3x3' ? 'text-red-600' : 'text-green-600'
+                    }`}>
+                    {scoreData.mode === '3x3' ? 'HARD' : 'NORMAL'}
+                  </p>
                 </div>
                 <div className="text-right">
                   <p className="text-xs text-gray-600 font-bold">SCORE</p>

@@ -5,15 +5,17 @@ export interface ScoreData {
   nickname: string;
   score: number;
   time: number;
+  mode: string;
   createdAt: Timestamp;
 }
 
-export async function saveScore(nickname: string, score: number, time: number) {
+export async function saveScore(nickname: string, score: number, time: number, mode: string) {
   const scoresRef = collection(db, 'scores');
   await addDoc(scoresRef, {
     nickname,
     score,
     time,
+    mode,
     createdAt: Timestamp.now(),
   });
 }

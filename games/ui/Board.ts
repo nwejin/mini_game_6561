@@ -1,37 +1,50 @@
 import Tile from './Tile';
 import { GAME_WIDTH, GAME_HEIGHT } from '../Config';
+import { GameMode, GAME_MODE_CONFIGS } from '../configs/BoardConfigs';
 
 interface BoardConfigs {
   scene: Phaser.Scene;
+  gameMode?: GameMode;
   onScoreUpdate?: (score: number) => void;
   onGameOver?: (reason: 'win' | 'lose') => void;
+  onStartTimer?: () => void;
 }
 
 export default class Board {
   private scene: Phaser.Scene;
-  private gridSize: number = 4;
-  private tileSize: number = 140;
-  private boardWidth: number = 560; // 5 * 100
-  private boardHeight: number = 560;
+  private gridSize: number;
+  private tileSize: number;
+  private boardWidth: number;
+  private boardHeight: number;
   private startX: number;
   private startY: number;
   private tiles: Map<string, Tile> = new Map();
   private isMoving: boolean = false;
   private swipeStartX: number = 0;
   private swipeStartY: number = 0;
+  private gridGraphics: Phaser.GameObjects.Graphics | null = null;
 
   private onScoreUpdate?: (score: number) => void;
   private onGameOver?: (reason: 'win' | 'lose') => void;
+  private onStartTimer?: () => void;
   private isGameOver: boolean = false;
+  private isFirstMove: boolean = true;
 
   constructor(configs: BoardConfigs) {
     this.scene = configs.scene;
 
+    // 게임 모드 설정 적용
+    const modeConfig = GAME_MODE_CONFIGS[configs.gameMode || '4x4'];
+    this.gridSize = modeConfig.gridSize;
+    this.tileSize = modeConfig.tileSize;
+    this.boardWidth = modeConfig.boardWidth;
+    this.boardHeight = modeConfig.boardHeight;
+
     this.onScoreUpdate = configs.onScoreUpdate;
     this.onGameOver = configs.onGameOver;
+    this.onStartTimer = configs.onStartTimer;
 
-    // 800x800 화면의 중앙에 500x500 보드 배치
-    // 시작 좌표 = (800 - 500) / 2 = 150
+    // 화면 중앙에 보드 배치
     this.startX = (GAME_WIDTH - this.boardWidth) / 2;
     this.startY = (GAME_HEIGHT - this.boardHeight) / 2;
   }
@@ -50,6 +63,7 @@ export default class Board {
 
   reset() {
     this.isGameOver = false;
+    this.isFirstMove = true;
 
     // 기존 타일들 모두 제거
     this.tiles.forEach((tile) => tile.destroy());
@@ -60,21 +74,33 @@ export default class Board {
     this.addRandomTile();
   }
 
+  destroy() {
+    // 그리드 그래픽 제거
+    if (this.gridGraphics) {
+      this.gridGraphics.destroy();
+      this.gridGraphics = null;
+    }
+
+    // 모든 타일 제거
+    this.tiles.forEach((tile) => tile.destroy());
+    this.tiles.clear();
+  }
+
   // 그리드 선 그리기
   private drawGrid() {
-    const gridGraphics = this.scene.add.graphics();
-    gridGraphics.lineStyle(2, 0xffffff, 1); // 선 두께 2px, 흰색
+    this.gridGraphics = this.scene.add.graphics();
+    this.gridGraphics.lineStyle(2, 0xffffff, 1); // 선 두께 2px, 흰색
 
     // 세로줄 (6개: 0, 1, 2, 3, 4, 5)
     for (let col = 0; col <= this.gridSize; col++) {
       const lineX = this.startX + col * this.tileSize;
-      gridGraphics.lineBetween(lineX, this.startY, lineX, this.startY + this.boardHeight);
+      this.gridGraphics.lineBetween(lineX, this.startY, lineX, this.startY + this.boardHeight);
     }
 
     // 가로줄 (6개: 0, 1, 2, 3, 4, 5)
     for (let row = 0; row <= this.gridSize; row++) {
       const lineY = this.startY + row * this.tileSize;
-      gridGraphics.lineBetween(this.startX, lineY, this.startX + this.boardWidth, lineY);
+      this.gridGraphics.lineBetween(this.startX, lineY, this.startX + this.boardWidth, lineY);
     }
   }
 
@@ -202,6 +228,12 @@ export default class Board {
     }
 
     if (moved) {
+      // 첫 이동 시 타이머 시작
+      if (this.isFirstMove) {
+        this.isFirstMove = false;
+        this.onStartTimer?.();
+      }
+
       this.addRandomTile();
 
       if (this.has19683()) {
@@ -274,6 +306,12 @@ export default class Board {
     }
 
     if (moved) {
+      // 첫 이동 시 타이머 시작
+      if (this.isFirstMove) {
+        this.isFirstMove = false;
+        this.onStartTimer?.();
+      }
+
       this.addRandomTile();
 
       if (this.has19683()) {
@@ -345,6 +383,12 @@ export default class Board {
     }
 
     if (moved) {
+      // 첫 이동 시 타이머 시작
+      if (this.isFirstMove) {
+        this.isFirstMove = false;
+        this.onStartTimer?.();
+      }
+
       this.addRandomTile();
 
       if (this.has19683()) {
@@ -416,6 +460,12 @@ export default class Board {
     }
 
     if (moved) {
+      // 첫 이동 시 타이머 시작
+      if (this.isFirstMove) {
+        this.isFirstMove = false;
+        this.onStartTimer?.();
+      }
+
       this.addRandomTile();
 
       if (this.has19683()) {

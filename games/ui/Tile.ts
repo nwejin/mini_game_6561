@@ -40,11 +40,14 @@ export default class Tile {
     this.image = this.scene.add.image(x, y, this.imageKey);
     this.image.setDisplaySize(this.cellSize, this.cellSize);
 
+    // cellSize에 따른 스케일 계산 (3x3: 186 -> 0.83, 4x4: 140 -> 0.68)
+    const targetScale = this.cellSize === 186 ? 0.9 : 0.68;
+
     // 등장 애니메이션
     this.image.setScale(0);
     this.scene.tweens.add({
       targets: this.image,
-      scale: 0.68,
+      scale: targetScale,
       duration: 200,
       ease: 'Back.easeOut',
     });
