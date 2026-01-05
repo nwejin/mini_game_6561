@@ -1,6 +1,7 @@
 ## Phaser3 mini game - 6561
 
 #### 게임 플레이하기 ➡️ <a href="https://minigame6561.vercel.app/" target="_blank">PLAY!!!! </a>
+#### 개발 후기 ➡️ <a href="https://velog.io/@nwejin/Phaser3%EB%A1%9C-%EB%AF%B8%EB%8B%88%EA%B2%8C%EC%9E%84%EC%9D%84-%EB%A7%8C%EB%93%A4%EC%96%B4%EB%B3%B4%EC%9E%90" target="_blank">바로가기</a>
 
 #### 1. Phaser3 설치 및 Scene 설정
 #### 2. Next.js SSR 에러 (다이나믹 임포트)
@@ -26,3 +27,7 @@
 #### 19. 점수 저장 로직 변경 (19683 달성 시 저장 / 이외 경우 게임 초기화)
 #### 20. 빠른 시간 / 높은 점수 순으로 순위 표시
 #### 21. 3*3 hard mode 추가 (승리 조건: 6561)
+
+
+
+
