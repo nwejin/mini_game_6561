@@ -41,13 +41,12 @@ export default function ShowScore({ isLoadingScores, closeScoreBoard, topScores 
                     ? 'bg-orange-100 border-2 border-orange-400'
                     : 'bg-blue-50'
                 }`}>
-                <div className="text-2xl font-bold w-8 text-center">{index + 1}</div>
+                <div className="text-xl font-bold w-8 h-8 flex items-center justify-center text-center border-2 rounded-full p-1 aspect-square bg-blue-500 text-white">
+                  {index + 1}
+                </div>
                 <div className="flex-1">
                   <p className="font-bold text-lg">{scoreData.nickname}</p>
-                  <p
-                    className={`text-xs font-bold ${
-                      scoreData.mode === '3x3' ? 'text-red-600' : 'text-green-600'
-                    }`}>
+                  <p className={`text-xs font-bold ${scoreData.mode === '3x3' ? 'text-red-600' : 'text-green-600'}`}>
                     {scoreData.mode === '3x3' ? 'HARD' : 'NORMAL'}
                   </p>
                 </div>
