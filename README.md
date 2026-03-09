@@ -3,6 +3,11 @@
 #### 게임 플레이하기 ➡️ <a href="https://minigame6561.vercel.app/" target="_blank">PLAY!!!! </a>
 #### 개발 후기 ➡️ <a href="https://velog.io/@nwejin/Phaser3%EB%A1%9C-%EB%AF%B8%EB%8B%88%EA%B2%8C%EC%9E%84%EC%9D%84-%EB%A7%8C%EB%93%A4%EC%96%B4%EB%B3%B4%EC%9E%90" target="_blank">바로가기</a>
 
+
+<div>
+<img width="711" height="791" alt="스크린샷 2026-03-09 오후 8 04 17" src="https://github.com/user-attachments/assets/1c364171-2154-4cea-a934-4c6c65f68834" />
+</div>
+
 #### 1. Phaser3 설치 및 Scene 설정
 #### 2. Next.js SSR 에러 (다이나믹 임포트)
 #### 3. image Loading Scene 설정
