@@ -8,6 +8,9 @@
 <img width="711" height="791" alt="스크린샷 2026-03-09 오후 8 04 17" src="https://github.com/user-attachments/assets/1c364171-2154-4cea-a934-4c6c65f68834" />
 </div>
 
+
+3x3 / 4x4 난이도를 선택하여 점수를 획득하고 기록하세요!
+
 #### 1. Phaser3 설치 및 Scene 설정
 #### 2. Next.js SSR 에러 (다이나믹 임포트)
 #### 3. image Loading Scene 설정
